@@ -169,3 +169,43 @@ int main()
 	//shmdt(value);
 	//shmctl(shmid, IPC_RMID, NULL);
 }
+
+
+NO 4
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <string.h>
+
+void* faktorijal(void *jal)
+{
+	int jaljal = (int*) jal;
+	int b;
+	int c=1;
+	for (b=0;b<jaljal;b++) c*=(b+1);
+	printf("%d! = %d\n",jaljal,c);
+}
+
+int main (int argc, char** argv){
+	int nilai[argc];
+	pthread_t threadid[argc];
+	int a;
+	int status;
+	for (a=1;a<=argc;a++)
+	{
+		int apajal = atoi(argv[a]);
+		status =pthread_create(&(threadid[a]),NULL,&faktorijal,(void*) apajal);
+		if (status)
+		{
+         fprintf(stderr,"Error - pthread_create() return code: %d\n",status);
+         exit(EXIT_FAILURE);
+     	}
+	}
+
+	for (a = 0; a<argc; a++) pthread_join(threadid[a],NULL);
+
+	exit(EXIT_SUCCESS);
+}
+
